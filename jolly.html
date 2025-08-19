@@ -1,0 +1,308 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jolly Person</title>
+  </head>
+  <body>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+        background-color: #cdbfaa;
+      }
+
+      h2 {
+        color: #007bff;
+      }
+
+      #setup-container,
+      #game-container {
+        margin-top: 50px;
+        padding: 20px;
+        background: #e2c69c;
+        display: inline-block;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+      }
+
+      input {
+        padding: 10px;
+        margin: 10px;
+        font-size: 16px;
+      }
+
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        color: white;
+        background: #007bff;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+
+      button:hover {
+        background: #3f70a4;
+      }
+
+      p {
+        font-size: 18px;
+      }
+
+      footer {
+        margin-top: 20px;
+        padding: 10px;
+        background: #fff3cd;
+        color: #3f70a4;
+        text-align: center;
+      }
+
+      .rules-container {
+        width: 90%;
+        max-width: 400px;
+        background: #fff3cd;
+        padding: 15px;
+        margin: 20px auto;
+        border-left: 5px solid #ff9800;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        text-align: left;
+      }
+
+      .rules-container h2 {
+        color: #ff5722;
+        font-size: 20px;
+      }
+
+      .rules-container ul {
+        padding-left: 20px;
+      }
+
+      .rules-container li {
+        margin-bottom: 8px;
+        font-size: 16px;
+        line-height: 1.5;
+      }
+
+      input {
+        background-color: #fff3cd;
+        border: transparent;
+      }
+
+      #timer {
+        font-size: 20px;
+        color: red;
+        font-weight: bold;
+        margin-top: 10px;
+      }
+    </style>
+
+    <div id="setup-container">
+      <h2>Set Up the Game</h2>
+      <input type="text" id="word-input" placeholder="Enter word to guess" />
+      <input
+        type="number"
+        id="chances-input"
+        placeholder="Enter chances"
+        min="1"
+      />
+      <button onclick="startGame()">Start Game</button>
+    </div>
+
+    <div id="game-container" style="display: none">
+      <h2>Guess the Word</h2>
+      <p>Word: <span id="hidden-word"></span></p>
+      <p>Chances left: <span id="chances"></span></p>
+      <p>Incorrect guesses: <span id="incorrect-letters">None</span></p>
+      <p id="timer">⏳ Time Left: 120s</p>
+      <input
+        type="text"
+        id="guess-input"
+        maxlength="1"
+        placeholder="Enter a letter"
+      />
+      <button onclick="makeGuess()">Guess</button>
+      <p id="message"></p>
+      <button onclick="startNewGame()">Start New Game</button>
+    </div>
+
+    <footer>
+      <p>&copy; 2025 Word Guessing Game | Developed by Saim</p>
+    </footer>
+
+    <div class="rules-container">
+      <h2>📜 Rules</h2>
+      <p>👋 Bhai jaan! Ye ek simple word guessing game hai.</p>
+      <ul>
+        <li>💡 Aik banda word set karega, dusra usay guess karega.</li>
+        <li>🔤 Aap aik aik letter guess kar sakte hain.</li>
+        <li>✅ Agar letter sahi hai to wo jagah par likh diya jayega.</li>
+        <li>❌ Agar letter galat hai to aapka chance kam ho jayega.</li>
+        <li>
+          🔴 Jo letters aap galat guess kar chuke hain, wo show ho jayenge.
+        </li>
+        <li>🎯 Word guess karne se pehle aapke chances khatam na hoon!</li>
+        <li>🏆 Agar sahi guess ho gaya, to jeet jaye ge! Warna game over!</li>
+      </ul>
+    </div>
+
+    <script>
+      let word = "";
+      let hiddenWord = [];
+      let chances = 0;
+      let incorrectGuesses = new Set();
+      let timeLeft = 120;
+      let timerInterval;
+      let isGameOver = false; // Track game state
+
+      function startGame() {
+        const wordInput = document
+          .getElementById("word-input")
+          .value.toLowerCase();
+        const chancesInput = parseInt(
+          document.getElementById("chances-input").value
+        );
+
+        if (!wordInput || chancesInput < 1) {
+          alert("Please enter a valid word and number of chances!");
+          return;
+        }
+
+        word = wordInput;
+        chances = chancesInput;
+        hiddenWord = Array(word.length).fill("_");
+        incorrectGuesses.clear();
+        isGameOver = false; // Reset game state
+        document.getElementById("setup-container").style.display = "none";
+        document.getElementById("game-container").style.display = "block";
+        // Enable inputs when starting new game
+        document.getElementById("guess-input").disabled = false;
+        document.querySelector(
+          "button[onclick='makeGuess()']"
+        ).disabled = false;
+
+        startTimer();
+        updateDisplay();
+      }
+
+      function updateDisplay() {
+        document.getElementById("hidden-word").innerText = hiddenWord.join(" ");
+        document.getElementById("chances").innerText = chances;
+        document.getElementById("incorrect-letters").innerText =
+          [...incorrectGuesses].join(", ") || "None";
+      }
+
+      function makeGuess() {
+        if (isGameOver || chances <= 0) return; // Block if game ended
+
+        const guess = document
+          .getElementById("guess-input")
+          .value.toLowerCase();
+        document.getElementById("guess-input").value = "";
+
+        if (!guess || guess.length !== 1) {
+          document.getElementById("message").innerText =
+            "Please enter a single letter!";
+          return;
+        }
+
+        if (incorrectGuesses.has(guess) || hiddenWord.includes(guess)) {
+          document.getElementById(
+            "message"
+          ).innerText = `You've already guessed "${guess}". Try a different letter!`;
+          return;
+        }
+
+        clearInterval(timerInterval); // Reset Timer
+        startTimer();
+
+        document.getElementById("message").innerText = "";
+
+        if (word.includes(guess)) {
+          for (let i = 0; i < word.length; i++) {
+            if (word[i] === guess) hiddenWord[i] = guess;
+          }
+        } else {
+          chances--;
+          incorrectGuesses.add(guess);
+        }
+
+        updateDisplay();
+
+        // Check win/loss conditions
+        if (!hiddenWord.includes("_")) {
+          document.getElementById("message").innerText = "🎉 You won!";
+          isGameOver = true;
+          clearInterval(timerInterval);
+          disableInputs();
+        } else if (chances <= 0) {
+          document.getElementById(
+            "message"
+          ).innerText = `😢 You lost! The word was "${word}".`;
+          isGameOver = true;
+          clearInterval(timerInterval);
+          disableInputs();
+        }
+      }
+
+      function startTimer() {
+        timeLeft = 120;
+        document.getElementById(
+          "timer"
+        ).innerText = `⏳ Time Left: ${timeLeft}s`;
+        timerInterval = setInterval(() => {
+          timeLeft--;
+          document.getElementById(
+            "timer"
+          ).innerText = `⏳ Time Left: ${timeLeft}s`;
+          if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            if (isGameOver) return; // Ignore if game already ended
+
+            chances--;
+            updateDisplay();
+
+            // Check if timer expiration caused loss
+            if (chances <= 0 || !hiddenWord.includes("_")) {
+              isGameOver = true;
+              clearInterval(timerInterval);
+              if (chances <= 0) {
+                document.getElementById(
+                  "message"
+                ).innerText = `😢 You lost! The word was "${word}".`;
+              } else {
+                document.getElementById("message").innerText = "🎉 You won!";
+              }
+              disableInputs();
+            } else {
+              startTimer(); // Restart timer if game continues
+            }
+          }
+        }, 1000);
+      }
+
+      function disableInputs() {
+        document.getElementById("guess-input").disabled = true;
+        document.querySelector("button[onclick='makeGuess()']").disabled = true;
+      }
+
+      function startNewGame() {
+        location.reload();
+      }
+
+      // ... rest of your code (event listeners, etc.)
+      document
+        .getElementById("guess-input")
+        .addEventListener("keypress", function (event) {
+          if (event.key === "Enter") {
+            makeGuess();
+          }
+        });
+    </script>
+  </body>
+</html>
