@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jolly Person</title>
+  </head>
+  <body>
+    <div id="setup-container">
+      <h2>Set Up the Game</h2>
+      <input type="text" id="word-input" placeholder="Enter word to guess" />
+      <input
+        type="number"
+        id="chances-input"
+        placeholder="Enter chances"
+        min="1"
+      />
+      <button onclick="startGame()">Start Game</button>
+    </div>
+
+    <div id="game-container" style="display: none">
+      <h2>Guess the Word</h2>
+      <p>Word: <span id="hidden-word"></span></p>
+      <p>Chances left: <span id="chances"></span></p>
+      <p>Incorrect guesses: <span id="incorrect-letters">None</span></p>
+      <p id="timer">⏳ Time Left: 120s</p>
+      <input
+        type="text"
+        id="guess-input"
+        maxlength="1"
+        placeholder="Enter a letter"
+      />
+      <button onclick="makeGuess()">Guess</button>
+      <p id="message"></p>
+      <button onclick="startNewGame()">Start New Game</button>
+    </div>
+
+    <footer>
+      <p>&copy; 2025 Word Guessing Game | Developed by Saim</p>
+    </footer>
+
+    <div class="rules-container">
+      <h2>📜 Rules</h2>
+      <p>👋 Bhai jaan! Ye ek simple word guessing game hai.</p>
+      <ul>
+        <li>💡 Aik banda word set karega, dusra usay guess karega.</li>
+        <li>🔤 Aap aik aik letter guess kar sakte hain.</li>
+        <li>✅ Agar letter sahi hai to wo jagah par likh diya jayega.</li>
+        <li>❌ Agar letter galat hai to aapka chance kam ho jayega.</li>
+        <li>
+          🔴 Jo letters aap galat guess kar chuke hain, wo show ho jayenge.
+        </li>
+        <li>🎯 Word guess karne se pehle aapke chances khatam na hoon!</li>
+        <li>🏆 Agar sahi guess ho gaya, to jeet jaye ge! Warna game over!</li>
+      </ul>
+    </div>
+  </body>
+</html>
