@@ -17,4 +17,3 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JOLLYPERSON_WEB }}
           channelId: live
           projectId: jollyperson-web
-          entryPoint: "Jolly Person Multidevice"
