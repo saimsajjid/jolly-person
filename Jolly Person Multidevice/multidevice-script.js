@@ -261,7 +261,7 @@ function setupRoleUI(secretWord) {
       hostRealWord = secretWord;
       hostWordVisible = false;
       els.displays.hostReveal.innerText = "•".repeat(secretWord.length);
-      els.displays.hostRevealToggle.innerText = "👁️";
+      els.displays.hostRevealToggle.innerHTML = '<i class="fa-solid fa-eye"></i>';
   } else {
       document.getElementById('role-indicator').innerText = "Guess the Word";
       document.getElementById('player-controls').style.display = 'block';
@@ -276,10 +276,10 @@ function toggleHostReveal() {
     hostWordVisible = !hostWordVisible;
     if (hostWordVisible) {
         els.displays.hostReveal.innerText = hostRealWord;
-        els.displays.hostRevealToggle.innerText = "🙈";
+        els.displays.hostRevealToggle.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
     } else {
         els.displays.hostReveal.innerText = "•".repeat(hostRealWord.length);
-        els.displays.hostRevealToggle.innerText = "👁️";
+        els.displays.hostRevealToggle.innerHTML = '<i class="fa-solid fa-eye"></i>';
     }
 }
 
@@ -289,11 +289,11 @@ function toggleHostReveal() {
 function resetTimer() {
   clearInterval(timerInterval);
   timeLeft = 120;
-  els.displays.timer.innerText = `⏳ ${timeLeft}s`;
+  els.displays.timer.innerHTML = `<i class="fa-solid fa-hourglass-half"></i> ${timeLeft}s`;
 
   timerInterval = setInterval(() => {
       timeLeft--;
-      els.displays.timer.innerText = `⏳ ${timeLeft}s`;
+      els.displays.timer.innerHTML = `<i class="fa-solid fa-hourglass-half"></i> ${timeLeft}s`;
 
       if (timeLeft <= 0) {
           if (!iAmHost) handleTimeout();
@@ -370,7 +370,7 @@ function playerGuess() {
 function endGame(isWin, word) {
   clearInterval(timerInterval);
 
-  els.displays.gameMsg.innerText = isWin ? "🎉 GAME WON!" : "💔 GAME OVER!";
+  els.displays.gameMsg.innerHTML = isWin ? '<i class="fa-solid fa-trophy"></i> GAME WON!' : '<i class="fa-solid fa-heart-crack"></i> GAME OVER!';
   els.displays.gameMsg.style.color = isWin ? "var(--success)" : "var(--error)";
   els.displays.hiddenWord.innerText = word.split('').join(' ');
 

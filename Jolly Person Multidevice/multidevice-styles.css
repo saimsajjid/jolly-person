@@ -529,7 +529,7 @@ input:focus {
 
 .rules-container ul {
   padding-left: 20px;
-  list-style-type: '👉 ';
+  list-style-type: disc;
 }
 
 .rules-container li {
