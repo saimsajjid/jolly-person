@@ -1,0 +1,275 @@
+/* --------------------------------------------------
+   1. MODERN CSS VARIABLES & RESET
+-------------------------------------------------- */
+:root {
+  --bg-color: #e0e5ec;
+  --text-main: #4a5568;
+  --text-light: #a0aec0;
+  --accent: #667eea;
+  --accent-hover: #5a67d8;
+  --error: #e53e3e;
+  --success: #38a169;
+
+  /* Neumorphism Shadows */
+  --shadow-light: 9px 9px 16px rgb(163, 177, 198, 0.6);
+  --shadow-dark: -9px -9px 16px rgba(255, 255, 255, 0.5);
+  --inner-shadow: inset 6px 6px 10px 0 rgba(163, 177, 198, 0.7), inset -6px -6px 10px 0 rgba(255, 255, 255, 0.8);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* --------------------------------------------------
+   2. COMPONENTS & NEUMORPHISM
+-------------------------------------------------- */
+.card {
+  background: var(--bg-color);
+  box-shadow: var(--shadow-light), var(--shadow-dark);
+  border-radius: 20px;
+  padding: 40px;
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+  transform: translateY(20px);
+  display: none; /* Hidden by default */
+}
+
+.card.active {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+h2 {
+  color: var(--accent);
+  margin-bottom: 25px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+p {
+  font-size: 16px;
+  margin: 10px 0;
+  line-height: 1.6;
+}
+
+/* Input Styles */
+.input-group {
+  margin-bottom: 20px;
+  text-align: left;
+  position: relative; /* For password toggle */
+}
+
+label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text-main);
+}
+
+input {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 12px;
+  background: var(--bg-color);
+  box-shadow: var(--inner-shadow);
+  font-family: inherit;
+  font-size: 16px;
+  color: var(--text-main);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+input:focus {
+  box-shadow: inset 4px 4px 8px 0 rgba(163, 177, 198, 0.7), inset -4px -4px 8px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* Password Toggle */
+.password-toggle {
+  position: absolute;
+  right: 15px;
+  top: 42px; /* Adjust based on label height + padding */
+  cursor: pointer;
+  font-size: 18px;
+  opacity: 0.6;
+  user-select: none;
+}
+.password-toggle:hover { opacity: 1; }
+
+/* Suggestion Text */
+.suggestion-text {
+  font-size: 12px;
+  color: var(--accent);
+  margin-top: 5px;
+  font-style: italic;
+  min-height: 18px;
+}
+
+/* Button Styles */
+.btn {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 50px;
+  background: var(--bg-color);
+  box-shadow: var(--shadow-light), var(--shadow-dark);
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 10px;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  color: var(--accent-hover);
+}
+
+.btn:active {
+  box-shadow: var(--inner-shadow);
+  transform: translateY(1px);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Game Specifics */
+#hidden-word {
+  font-size: 32px;
+  letter-spacing: 5px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 20px 0;
+  min-height: 48px;
+  transition: color 0.3s ease;
+}
+
+.stats-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0;
+  font-size: 14px;
+  color: var(--text-light);
+}
+
+.stat-item strong {
+  color: var(--text-main);
+}
+
+#timer {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--error);
+}
+
+#message {
+  margin-top: 20px;
+  font-weight: 600;
+  min-height: 24px;
+}
+
+.message-win { color: var(--success); }
+.message-loss { color: var(--error); }
+.message-warn { color: #d69e2e; }
+
+/* Footer & Rules */
+footer {
+  margin-top: 40px;
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.rules-container {
+  margin-top: 30px;
+  width: 100%;
+  max-width: 500px;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: var(--shadow-light), var(--shadow-dark);
+  font-size: 14px;
+}
+
+.rules-container h3 {
+  color: var(--accent);
+  margin-top: 0;
+}
+
+.rules-container ul {
+  padding-left: 20px;
+  margin: 0;
+  text-align: left;
+}
+
+.rules-container li {
+  margin-bottom: 5px;
+}
+
+/* --------------------------------------------------
+   3. ANIMATIONS
+-------------------------------------------------- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Wrong Guess Shake */
+@keyframes shakeRed {
+  0%, 100% { transform: translateX(0); box-shadow: var(--shadow-light), var(--shadow-dark); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); border: 1px solid var(--error); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+/* Correct Guess Pulse */
+@keyframes pulseGreen {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); box-shadow: 0 0 15px var(--success); }
+  100% { transform: scale(1); }
+}
+
+.anim-wrong {
+  animation: shakeRed 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+.anim-correct {
+  animation: pulseGreen 0.4s ease-in-out;
+  color: var(--success) !important;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .card { padding: 25px; }
+  #hidden-word { font-size: 24px; letter-spacing: 3px; }
+  h2 { font-size: 24px; }
+}
+
+/* --------------------------------------------------
+   4. YOUR CUSTOM LAPTOP CSS (1500px - 1600px)
+-------------------------------------------------- */
+@media screen and (min-width: 1500px) and (max-width: 1600px) {
+  #hidden-word { font-size: 134px; }
+  .card { max-width: 1536px; }
+}
