@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jolly Person | Multiplayer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
+    <style>
+      /* --------------------------------------------------
+         1. MODERN CSS VARIABLES & RESET
+      -------------------------------------------------- */
+      :root {
+        --bg-color: #e0e5ec;
+        --text-main: #4a5568;
+        --text-light: #a0aec0;
+        --accent: #667eea;
+        --accent-hover: #5a67d8;
+        --error: #e53e3e;
+        --success: #38a169;
+        
+        --shadow-light: 9px 9px 16px rgb(163, 177, 198, 0.6);
+        --shadow-dark: -9px -9px 16px rgba(255, 255, 255, 0.5);
+        --inner-shadow: inset 6px 6px 10px 0 rgba(163, 177, 198, 0.7), inset -6px -6px 10px 0 rgba(255, 255, 255, 0.8);
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        font-family: 'Poppins', sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      /* --------------------------------------------------
+         2. COMPONENTS & NEUMORPHISM
+      -------------------------------------------------- */
+      .card {
+        background: var(--bg-color);
+        box-shadow: var(--shadow-light), var(--shadow-dark);
+        border-radius: 20px;
+        padding: 40px;
+        width: 100%;
+        max-width: 500px;
+        text-align: center;
+        display: none; 
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.5s ease;
+        position: relative; 
+      }
+
+      .card.active {
+        display: block;
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      h2 {
+        color: var(--accent);
+        margin-bottom: 25px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+      }
+
+      p { font-size: 16px; margin: 10px 0; line-height: 1.6; }
+
+      /* Input Styles */
+      .input-group { margin-bottom: 20px; text-align: left; position: relative; }
+      label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--text-main); }
+      
+      input {
+        width: 100%; padding: 15px; border: none; border-radius: 12px;
+        background: var(--bg-color); box-shadow: var(--inner-shadow);
+        font-family: inherit; font-size: 16px; color: var(--text-main); outline: none;
+        transition: all 0.2s ease;
+      }
+      input:focus { box-shadow: inset 4px 4px 8px 0 rgba(163, 177, 198, 0.7), inset -4px -4px 8px 0 rgba(255, 255, 255, 0.8); }
+
+      /* Button Styles */
+      .btn {
+        width: 100%; padding: 15px; border: none; border-radius: 50px;
+        background: var(--bg-color); box-shadow: var(--shadow-light), var(--shadow-dark);
+        color: var(--accent); font-weight: 700; font-size: 16px; cursor: pointer;
+        transition: all 0.2s ease; text-transform: uppercase; letter-spacing: 1px; margin-top: 10px;
+      }
+      .btn:hover { transform: translateY(-2px); color: var(--accent-hover); }
+      .btn:active { box-shadow: var(--inner-shadow); transform: translateY(1px); }
+      .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+      /* Game Specifics */
+      #hidden-word { font-size: 48px; letter-spacing: 5px; font-weight: 700; color: var(--text-main); margin: 20px 0; min-height: 48px; }
+      .stats-row { display: flex; justify-content: space-between; margin: 20px 0; font-size: 14px; color: var(--text-light); }
+      .stat-item strong { color: var(--text-main); }
+      
+      #room-display { font-size: 24px; font-weight: bold; color: var(--text-main); letter-spacing: 5px; margin: 10px 0; }
+      
+      footer { margin-top: 40px; font-size: 12px; color: var(--text-light); }
+
+      /* Message Colors */
+      .message-win { color: var(--success); }
+      .message-loss { color: var(--error); }
+      .message-warn { color: #d69e2e; }
+
+      /* --------------------------------------------------
+         3. LAPTOP CUSTOM CSS
+      -------------------------------------------------- */
+      @media screen and (min-width: 1500px) and (max-width: 1600px) {
+          .card { 
+              width: 100%; 
+              max-width: 1450px; 
+              min-width: auto; 
+          } 
+          #hidden-word { font-size: 60px; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <div id="screen-lobby" class="card active">
+      <h2>Jolly Multiplayer</h2>
+      <button id="btn-create" class="btn">Create New Room</button>
+      
+      <div style="margin: 20px 0; font-weight: bold; color: var(--text-light);">-- OR --</div>
+      
+      <div class="input-group">
+        <input type="text" id="join-code" placeholder="Enter Room Code (e.g. A1B2)" style="text-align: center; text-transform: uppercase;" maxlength="4" />
+      </div>
+      <button id="btn-join" class="btn">Join Room</button>
+      <p id="lobby-msg" style="color: var(--error); font-size: 14px; margin-top: 10px;"></p>
+    </div>
+
+    <div id="screen-setup" class="card">
+      <h2>Room Created!</h2>
+      <p>Share this code with your friends:</p>
+      <div id="room-display">----</div>
+      
+      <div style="margin-bottom: 20px; font-size: 14px; color: var(--text-light);">
+        👥 Players: <strong id="player-count-display" style="color: var(--accent);">1</strong>
+      </div>
+
+      <hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;">
+      
+      <div class="input-group">
+        <label>Secret Word</label>
+        <input type="text" id="word-input" placeholder="Enter Secret Word" />
+      </div>
+      <div class="input-group">
+        <label>Chances</label>
+        <input type="number" id="chances-input" value="5" />
+      </div>
+      <button id="btn-start-game" class="btn">Start Game</button> 
+      <p id="setup-status" style="color: var(--accent); font-size: 12px; margin-top: 10px;">Waiting for players to join...</p>
+    </div>
+
+    <div id="screen-waiting" class="card">
+      <h2>Connected!</h2>
+      <p>You are in the room.</p>
+      <p>Waiting for the Host to set the word...</p>
+      <div style="font-size: 40px; margin-top: 20px;">⏳</div>
+    </div>
+
+    <div id="screen-game" class="card">
+      <div style="position: absolute; top: 15px; right: 20px; font-size: 14px; color: var(--text-light);">
+        Room: <strong id="game-room-code" style="color: var(--accent); letter-spacing: 2px;">----</strong>
+      </div>
+
+      <h2 id="role-indicator">Guess the Word</h2>
+      
+      <div id="hidden-word">_ _ _ _ _</div>
+      
+      <div class="stats-row">
+        <div class="stat-item">Chances: <strong id="game-chances">5</strong></div>
+        <div class="stat-item" id="timer" style="color: var(--error); font-weight: bold;">⏳ 120s</div>
+      </div>
+
+      <p style="font-size: 14px;">Bad Guesses: <span id="bad-guesses" style="color: var(--error);">None</span></p>
+
+      <div id="player-controls">
+        <div class="input-group" style="margin-top: 20px;">
+            <input type="text" id="guess-input" maxlength="1" placeholder="Type a letter..." style="text-align: center; font-size: 20px; letter-spacing: 2px;" autocomplete="off" />
+        </div>
+        <button id="btn-submit" class="btn">Submit Guess</button>
+      </div>
+
+      <div id="host-controls" style="display: none; margin-top: 20px;">
+          <p style="color: var(--accent); font-style: italic;">You are the Host. Watch them play!</p>
+          
+          <p style="font-size: 14px; color: var(--text-light); margin-bottom: 10px;">
+             👥 Connected: <strong id="game-live-count" style="color: var(--success);">1</strong>
+          </p>
+
+          <p>
+            Secret Word: 
+            <span id="host-reveal" style="font-weight: bold; margin-right: 10px;">•••••••</span>
+            <span id="host-reveal-toggle" style="cursor: pointer; font-size: 18px;">👁️</span>
+          </p>
+      </div>
+
+      <p id="game-msg" style="font-weight: bold; margin-top: 15px; min-height: 24px;"></p>
+      <button id="btn-restart" class="btn" style="display: none; background: #e0e5ec; color: var(--text-main);">Back to Lobby</button>
+    </div>
+
+    <footer>
+      &copy; 2025 | Jolly Multiplayer | Built by Saim
+    </footer>
+
+    <script>
+      // ==========================================
+      // 1. CONFIGURATION
+      // ==========================================
+      const firebaseConfig = {
+        apiKey: "AIzaSyCWlPC2mEHC89h2XaWtzhBKBPVSgeMKcPc",
+        authDomain: "jollyperson-web.firebaseapp.com",
+        databaseURL: "https://jollyperson-web-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "jollyperson-web",
+        storageBucket: "jollyperson-web.firebasestorage.app",
+        messagingSenderId: "243223570950",
+        appId: "1:243223570950:web:ffec8fd683fe6d7f14b187"
+      };
+      
+      let db; 
+      try {
+        firebase.initializeApp(firebaseConfig);
+        db = firebase.database(); 
+        console.log("Firebase initialized successfully");
+      } catch (e) {
+        console.error("Firebase Init Error:", e);
+        alert("Database connection failed. Check console.");
+      }
+
+      // ==========================================
+      // 2. STATE & DOM ELEMENTS
+      // ==========================================
+      let myRoomId = null;
+      let iAmHost = false;
+      let myPlayerRef = null; // Store reference to self for cleanup
+      let hostRealWord = ""; 
+      let hostWordVisible = false;
+
+      // Timer State
+      let timerInterval = null;
+      let timeLeft = 120;
+      let lastHiddenStr = "";  
+      let lastBadGuessesStr = "";
+      let lastChances = 5;
+
+      const els = {
+        screens: {
+          lobby: document.getElementById('screen-lobby'),
+          setup: document.getElementById('screen-setup'),
+          waiting: document.getElementById('screen-waiting'),
+          game: document.getElementById('screen-game')
+        },
+        inputs: {
+          joinCode: document.getElementById('join-code'),
+          word: document.getElementById('word-input'),
+          chances: document.getElementById('chances-input'),
+          guess: document.getElementById('guess-input')
+        },
+        btns: {
+          create: document.getElementById('btn-create'),
+          join: document.getElementById('btn-join'),
+          start: document.getElementById('btn-start-game'),
+          submit: document.getElementById('btn-submit'),
+          restart: document.getElementById('btn-restart')
+        },
+        displays: {
+          room: document.getElementById('room-display'),
+          gameRoomCode: document.getElementById('game-room-code'),
+          lobbyMsg: document.getElementById('lobby-msg'),
+          setupStatus: document.getElementById('setup-status'),
+          playerCount: document.getElementById('player-count-display'),
+          gameLiveCount: document.getElementById('game-live-count'),
+          hiddenWord: document.getElementById('hidden-word'),
+          chances: document.getElementById('game-chances'),
+          badGuesses: document.getElementById('bad-guesses'),
+          gameMsg: document.getElementById('game-msg'),
+          hostReveal: document.getElementById('host-reveal'),
+          hostRevealToggle: document.getElementById('host-reveal-toggle'),
+          timer: document.getElementById('timer')
+        }
+      };
+
+      // ==========================================
+      // 3. EVENT LISTENERS
+      // ==========================================
+      els.btns.create.addEventListener('click', createRoom);
+      els.btns.join.addEventListener('click', joinRoom);
+      els.btns.start.addEventListener('click', hostStartGame);
+      els.btns.submit.addEventListener('click', playerGuess);
+      
+      els.displays.hostRevealToggle.addEventListener('click', toggleHostReveal);
+
+      els.inputs.joinCode.addEventListener('keypress', (e) => { if(e.key === 'Enter') joinRoom(); });
+      els.inputs.guess.addEventListener('keypress', (e) => { if(e.key === 'Enter') playerGuess(); });
+      
+      els.btns.restart.addEventListener('click', () => location.reload());
+
+      // FIX: Force Cleanup on Close
+      window.addEventListener('beforeunload', () => {
+          if (myPlayerRef) myPlayerRef.remove();
+      });
+
+      // ==========================================
+      // 4. LOBBY LOGIC
+      // ==========================================
+      function showScreen(screenName) {
+        Object.values(els.screens).forEach(el => {
+          el.classList.remove('active');
+          el.style.display = 'none';
+        });
+        const target = els.screens[screenName];
+        target.style.display = 'block';
+        setTimeout(() => target.classList.add('active'), 10);
+      }
+
+      function generateRoomCode() {
+        return Math.random().toString(36).substring(2, 6).toUpperCase();
+      }
+
+      function createRoom() {
+        const customCode = els.inputs.joinCode.value.trim().toUpperCase();
+        let code = (customCode.length >= 3) ? customCode : generateRoomCode();
+
+        myRoomId = code;
+        iAmHost = true;
+
+        const roomRef = db.ref('rooms/' + code);
+        
+        // 1. NUCLEAR WIPE: Clear room completely first to remove zombies
+        roomRef.set(null).then(() => {
+            roomRef.update({ status: 'waiting' });
+            
+            // 2. Add Host
+            myPlayerRef = roomRef.child('players').push();
+            myPlayerRef.set({ role: 'host', joined: Date.now() });
+            myPlayerRef.onDisconnect().remove();
+        });
+
+        // 3. LISTEN FOR PLAYERS
+        roomRef.child('players').on('value', (snapshot) => {
+          const players = snapshot.val() || {};
+          const count = Object.keys(players).length;
+          
+          els.displays.playerCount.innerText = count;
+          els.displays.gameLiveCount.innerText = count;
+          
+          if (count > 1) {
+            els.displays.playerCount.style.color = "var(--success)";
+            els.displays.setupStatus.innerText = "Players Connected!";
+            els.displays.setupStatus.style.color = "var(--success)";
+          } else {
+            els.displays.playerCount.style.color = "var(--accent)";
+            els.displays.setupStatus.innerText = "Waiting for players...";
+            els.displays.setupStatus.style.color = "var(--accent)";
+          }
+        });
+
+        els.displays.room.innerText = code;
+        showScreen('setup');
+      }
+
+      function joinRoom() {
+        const rawInput = els.inputs.joinCode.value;
+        const code = rawInput.trim().toUpperCase();
+
+        if (code.length !== 4) { alert("Code must be 4 characters."); return; }
+
+        els.btns.join.innerText = "Connecting...";
+        els.btns.join.disabled = true;
+
+        db.ref('rooms/' + code).once('value')
+        .then(snapshot => {
+          if (snapshot.exists()) {
+            myRoomId = code;
+            iAmHost = false;
+            
+            // Add Guest
+            myPlayerRef = db.ref('rooms/' + code + '/players').push();
+            myPlayerRef.set({ role: 'guest', joined: Date.now() });
+            myPlayerRef.onDisconnect().remove(); 
+            
+            showScreen('waiting');
+            listenToGame(); 
+          } else {
+            alert("Room not found!");
+            els.btns.join.innerText = "Join Room";
+            els.btns.join.disabled = false;
+          }
+        })
+        .catch(error => {
+            console.error("Join Error:", error);
+            alert("Connection error.");
+            els.btns.join.innerText = "Join Room";
+            els.btns.join.disabled = false;
+          });
+      }
+
+      // ==========================================
+      // 5. GAME START (HOST)
+      // ==========================================
+      function hostStartGame() {
+        const word = els.inputs.word.value.trim().toLowerCase();
+        const chances = parseInt(els.inputs.chances.value);
+
+        if (!word || chances < 1) return;
+
+        // Space Handling
+        const hiddenArray = word.split('').map(char => char === ' ' ? '&nbsp;' : '_');
+        
+        db.ref('rooms/' + myRoomId).update({
+            word: word,
+            hiddenWord: hiddenArray,
+            chances: chances,
+            badGuesses: "",
+            status: 'playing'
+        });
+
+        listenToGame();
+      }
+
+      // ==========================================
+      // 6. SYNC LOGIC (The Brain)
+      // ==========================================
+      function listenToGame() {
+        db.ref('rooms/' + myRoomId).on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (!data) return;
+
+            // Transition
+            if (data.status === 'playing' || data.status === 'win' || data.status === 'loss') {
+                if (!els.screens.game.classList.contains('active')) {
+                    showScreen('game');
+                    setupRoleUI(data.word);
+                    els.displays.gameRoomCode.innerText = myRoomId; 
+                }
+            }
+
+            // Stats
+            const currentHiddenStr = data.hiddenWord ? data.hiddenWord.join(' ') : "";
+            els.displays.hiddenWord.innerHTML = currentHiddenStr; 
+            els.displays.chances.innerText = data.chances !== undefined ? data.chances : 0;
+            els.displays.badGuesses.innerText = data.badGuesses ? data.badGuesses : "None";
+
+            // Timer Logic
+            if (currentHiddenStr !== lastHiddenStr || 
+                data.badGuesses !== lastBadGuessesStr || 
+                (data.chances !== undefined && data.chances !== lastChances)) {
+                
+                lastHiddenStr = currentHiddenStr;
+                lastBadGuessesStr = data.badGuesses || "";
+                lastChances = data.chances;
+                
+                if (data.status === 'playing') resetTimer();
+            }
+
+            if (data.status === 'win') endGame(true, data.word);
+            if (data.status === 'loss') endGame(false, data.word);
+        });
+      }
+
+      function setupRoleUI(secretWord) {
+        if (iAmHost) {
+            document.getElementById('role-indicator').innerText = "Spectating Mode";
+            document.getElementById('player-controls').style.display = 'none';
+            document.getElementById('host-controls').style.display = 'block';
+            
+            hostRealWord = secretWord;
+            hostWordVisible = false; 
+            els.displays.hostReveal.innerText = "•".repeat(secretWord.length);
+            els.displays.hostRevealToggle.innerText = "👁️";
+        } else {
+            document.getElementById('role-indicator').innerText = "Guess the Word";
+            document.getElementById('player-controls').style.display = 'block';
+            document.getElementById('host-controls').style.display = 'none';
+            
+            setTimeout(() => els.inputs.guess.focus(), 100);
+            resetTimer(); 
+        }
+      }
+
+      function toggleHostReveal() {
+          hostWordVisible = !hostWordVisible;
+          if (hostWordVisible) {
+              els.displays.hostReveal.innerText = hostRealWord;
+              els.displays.hostRevealToggle.innerText = "🙈";
+          } else {
+              els.displays.hostReveal.innerText = "•".repeat(hostRealWord.length);
+              els.displays.hostRevealToggle.innerText = "👁️";
+          }
+      }
+
+      // ==========================================
+      // 7. TIMER LOGIC
+      // ==========================================
+      function resetTimer() {
+        clearInterval(timerInterval);
+        timeLeft = 120;
+        els.displays.timer.innerText = `⏳ ${timeLeft}s`;
+
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            els.displays.timer.innerText = `⏳ ${timeLeft}s`;
+
+            if (timeLeft <= 0) {
+                if (!iAmHost) handleTimeout();
+                else clearInterval(timerInterval);
+            }
+        }, 1000);
+      }
+
+      function handleTimeout() {
+        clearInterval(timerInterval);
+        
+        db.ref('rooms/' + myRoomId).once('value').then(snapshot => {
+            const data = snapshot.val();
+            if (data.status !== 'playing') return;
+
+            let newChances = data.chances - 1;
+            let newStatus = newChances <= 0 ? 'loss' : 'playing';
+
+            db.ref('rooms/' + myRoomId).update({
+                chances: newChances,
+                status: newStatus
+            });
+            
+            els.displays.gameMsg.innerText = "Time's up! You lost a chance.";
+            setTimeout(() => { 
+                if(els.displays.gameMsg.innerText.includes("Time's up")) 
+                   els.displays.gameMsg.innerText = ""; 
+            }, 3000);
+        });
+      }
+
+      // ==========================================
+      // 8. PLAYER ACTIONS
+      // ==========================================
+      function playerGuess() {
+        const guess = els.inputs.guess.value.toLowerCase();
+        els.inputs.guess.value = '';
+        els.inputs.guess.focus();
+        
+        if (!guess) return;
+
+        db.ref('rooms/' + myRoomId).once('value').then(snapshot => {
+            const data = snapshot.val();
+            if (data.status !== 'playing') return;
+
+            let newHidden = [...data.hiddenWord];
+            let newChances = data.chances;
+            let newBadGuesses = data.badGuesses ? data.badGuesses.split(', ') : [];
+
+            if (data.word.includes(guess)) {
+                for (let i = 0; i < data.word.length; i++) {
+                    if (data.word[i] === guess) newHidden[i] = guess;
+                }
+            } else {
+                if (!newBadGuesses.includes(guess)) {
+                    newBadGuesses.push(guess);
+                    newChances--;
+                }
+            }
+
+            let newStatus = 'playing';
+            if (!newHidden.includes('_')) newStatus = 'win';
+            if (newChances <= 0) newStatus = 'loss';
+
+            db.ref('rooms/' + myRoomId).update({
+                hiddenWord: newHidden,
+                chances: newChances,
+                badGuesses: newBadGuesses.join(', '),
+                status: newStatus
+            });
+        });
+      }
+
+      function endGame(isWin, word) {
+        clearInterval(timerInterval);
+        
+        els.displays.gameMsg.innerText = isWin ? "🎉 GAME WON!" : "💔 GAME OVER!";
+        els.displays.gameMsg.style.color = isWin ? "var(--success)" : "var(--error)";
+        els.displays.hiddenWord.innerText = word.split('').join(' ');
+        
+        if (iAmHost) {
+            els.displays.hostReveal.innerText = word;
+            els.displays.hostRevealToggle.style.display = 'none'; 
+        }
+
+        els.btns.submit.disabled = true;
+        els.inputs.guess.disabled = true;
+        els.btns.restart.style.display = 'block';
+      }
+    </script>
+  </body>
+</html>
