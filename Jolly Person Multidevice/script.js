@@ -88,7 +88,7 @@ function startSinglePlayer() {
 function toggleWordVisibility() {
   const type = els.wordInput.getAttribute('type') === 'password' ? 'text' : 'password';
   els.wordInput.setAttribute('type', type);
-  els.toggleWordBtn.innerText = type === 'password' ? '👁️' : '🙈';
+  els.toggleWordBtn.innerHTML = type === 'password' ? '<i class="fa-solid fa-eye"></i>' : '<i class="fa-solid fa-eye-slash"></i>';
 }
 
 // Feature 2: Smart Chance Suggestion
@@ -213,11 +213,11 @@ function handleGuess() {
 function startTimer() {
   clearInterval(state.timerInterval);
   state.timeLeft = 120;
-  els.timerDisplay.innerText = `⏳ ${state.timeLeft}s`;
+  els.timerDisplay.innerHTML = `<i class="fa-solid fa-hourglass-half"></i> ${state.timeLeft}s`;
 
   state.timerInterval = setInterval(() => {
     state.timeLeft--;
-    els.timerDisplay.innerText = `⏳ ${state.timeLeft}s`;
+    els.timerDisplay.innerHTML = `<i class="fa-solid fa-hourglass-half"></i> ${state.timeLeft}s`;
 
     // TIMER LOGIC
     if (state.timeLeft <= 0) {
@@ -245,13 +245,13 @@ function startTimer() {
 
 function checkWinCondition() {
   if (!state.hiddenWord.includes('_')) {
-    endGame(true, "🎉 Alhamdulillah! You won!");
+    endGame(true, '<i class="fa-solid fa-trophy"></i> Alhamdulillah! You won!');
   }
 }
 
 function checkLossCondition() {
   if (state.chances <= 0) {
-    endGame(false, `💔 Game Over! Word was "${state.word}"`);
+    endGame(false, `<i class="fa-solid fa-heart-crack"></i> Game Over! Word was "${state.word}"`);
   }
 }
 
@@ -297,7 +297,7 @@ function updateDisplay() {
 }
 
 function showMessage(text, type = "neutral") {
-  els.messageDisplay.innerText = text;
+  els.messageDisplay.innerHTML = text;
   els.messageDisplay.className = "";
   if (type === "warn") els.messageDisplay.classList.add("message-warn");
   if (type === "success") els.messageDisplay.classList.add("message-win");

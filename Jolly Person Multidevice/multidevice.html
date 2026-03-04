@@ -12,6 +12,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="multidevice-styles.css" />
   </head>
   <body>
@@ -36,7 +37,7 @@
         <h2>Join or Create</h2>
 
         <button id="btn-create" class="btn btn-primary btn-large">
-          <span class="icon">🌍</span>
+          <span class="icon"><i class="fa-solid fa-globe"></i></span>
           Create New Room
           <span class="btn-subtext">Be the Host</span>
         </button>
@@ -54,7 +55,7 @@
         </div>
 
         <button id="btn-join" class="btn btn-secondary btn-large">
-          <span class="icon">🚀</span>
+          <span class="icon"><i class="fa-solid fa-rocket"></i></span>
           Join Room
           <span class="btn-subtext">Play with Friends</span>
         </button>
@@ -82,7 +83,7 @@
           <div class="input-wrapper">
             <input type="password" id="word-input" placeholder="Enter Secret Word" autocomplete="off" />
             <button type="button" class="password-toggle" id="toggle-word-multidevice" aria-label="Toggle word visibility">
-              👁️
+              <i class="fa-solid fa-eye"></i>
             </button>
           </div>
         </div>
@@ -95,7 +96,7 @@
         </div>
 
         <button id="btn-start-game" class="btn btn-primary btn-large">
-          <span class="icon">🎮</span>
+          <span class="icon"><i class="fa-solid fa-gamepad"></i></span>
           Start Game
         </button>
         <p id="setup-status" class="suggestion-text" style="color: var(--primary-color); margin-top: 15px; text-align: center;">Waiting for players to join...</p>
@@ -106,7 +107,7 @@
         <h2>Connected!</h2>
         <p class="highlight-text">You are in the room.</p>
         <p>Waiting for the Host to set the word and start the game...</p>
-        <div class="ready-illustration">⏳</div>
+        <div class="ready-illustration"><i class="fa-solid fa-hourglass-half"></i></div>
       </div>
 
       <!-- Game Screen -->
@@ -159,7 +160,7 @@
             <div class="bad-guesses-container" style="text-align: center;">
               <span class="bad-guesses-label">Secret Word:</span>
               <span id="host-reveal" style="font-family: var(--font-display); font-size: 1.5rem; letter-spacing: 3px; font-weight: 700; margin-right: 15px;">•••••••</span>
-              <button id="host-reveal-toggle" class="password-toggle" style="position: static; vertical-align: middle; background: rgba(255,255,255,0.1); border-radius: 50%; width: 40px; height: 40px;">👁️</button>
+              <button id="host-reveal-toggle" class="password-toggle" style="position: static; vertical-align: middle; background: rgba(255,255,255,0.1); border-radius: 50%; width: 40px; height: 40px;"><i class="fa-solid fa-eye"></i></button>
             </div>
         </div>
 
@@ -168,7 +169,7 @@
         </div>
 
         <button id="btn-restart" class="btn btn-secondary btn-large" style="display: none; margin-top: 15px;">
-          <span class="icon">🏠</span>
+          <span class="icon"><i class="fa-solid fa-house"></i></span>
           Back to Lobby
         </button>
       </div>
@@ -176,7 +177,7 @@
     </main>
 
     <footer>
-      &copy; 2025 | Jolly Multiplayer | Built by Saim
+      &copy; 2026 | Jolly Multiplayer | Built by Saim
     </footer>
 
     <script src="multidevice-script.js"></script>
