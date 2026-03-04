@@ -2,274 +2,637 @@
    1. MODERN CSS VARIABLES & RESET
 -------------------------------------------------- */
 :root {
-  --bg-color: #e0e5ec;
-  --text-main: #4a5568;
-  --text-light: #a0aec0;
-  --accent: #667eea;
-  --accent-hover: #5a67d8;
-  --error: #e53e3e;
-  --success: #38a169;
+  /* Sleek Dark Palette */
+  --bg-primary: #0F172A; /* Slate 900 */
+  --bg-secondary: #1E293B; /* Slate 800 */
+  --card-bg: rgba(30, 41, 59, 0.85); /* Glassmorphism Base Dark */
+  --text-main: #F8FAFC; /* Slate 50 */
+  --text-muted: #94A3B8; /* Slate 400 */
+  --primary-color: #3B82F6; /* Blue 500 */
+  --primary-hover: #2563EB; /* Blue 600 */
+  --secondary-color: #10B981; /* Emerald 500 */
+  --secondary-hover: #059669; /* Emerald 600 */
+  --accent-color: #8B5CF6; /* Violet 500 */
+  --error: #EF4444; /* Red 500 */
+  --success: #34D399; /* Emerald 400 */
+  --warning: #F59E0B; /* Amber 500 */
 
-  /* Neumorphism Shadows */
-  --shadow-light: 9px 9px 16px rgb(163, 177, 198, 0.6);
-  --shadow-dark: -9px -9px 16px rgba(255, 255, 255, 0.5);
-  --inner-shadow: inset 6px 6px 10px 0 rgba(163, 177, 198, 0.7), inset -6px -6px 10px 0 rgba(255, 255, 255, 0.8);
+  /* Shadows and Borders */
+  --box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  --card-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 5px 15px rgba(0, 0, 0, 0.4);
+  --input-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  --border-radius-lg: 24px;
+  --border-radius-md: 16px;
+  --border-radius-sm: 8px;
+  --border-radius-pill: 9999px;
+
+  /* Fonts */
+  --font-display: 'Fredoka', 'Poppins', sans-serif;
+  --font-body: 'Poppins', sans-serif;
 }
 
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-  font-family: 'Poppins', sans-serif;
-  background-color: var(--bg-color);
+  font-family: var(--font-body);
+  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+  background-attachment: fixed;
   color: var(--text-main);
-  margin: 0;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 20px;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Background Decorations (Glows) */
+.background-decorations {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  filter: blur(40px);
+}
+
+.circle-1 { width: 300px; height: 300px; top: -100px; left: -100px; background: rgba(59, 130, 246, 0.15); } /* Blue */
+.circle-2 { width: 200px; height: 200px; bottom: 10%; right: -50px; background: rgba(16, 185, 129, 0.1); } /* Emerald */
+.circle-3 { width: 150px; height: 150px; top: 40%; left: 10%; background: rgba(139, 92, 246, 0.1); } /* Violet */
+.circle-4 { width: 250px; height: 250px; top: -50px; right: 15%; background: rgba(59, 130, 246, 0.1); } /* Blue */
+
+
+/* --------------------------------------------------
+   2. TYPOGRAPHY & LAYOUT
+-------------------------------------------------- */
+.app-container {
+  width: 100%;
+  max-width: 450px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 1;
+}
+
+.app-header {
+  text-align: center;
+  margin-bottom: 30px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 3rem;
+  color: #fff;
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  font-family: var(--font-body);
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 1.1rem;
+  opacity: 0.9;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+h2 {
+  font-family: var(--font-display);
+  color: var(--primary-color);
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+  font-weight: 600;
+  text-align: center;
+}
+
+h3 {
+  font-family: var(--font-display);
+  color: #fff;
+  font-size: 1.4rem;
+  margin-bottom: 15px;
+}
+
+p {
+  font-size: 1rem;
+  margin-bottom: 15px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.highlight-text {
+  font-weight: 600;
+  color: var(--text-main);
+  font-size: 1.1rem;
+}
+
+.muted-text {
+  font-size: 0.9rem;
+  color: var(--text-muted);
 }
 
 /* --------------------------------------------------
-   2. COMPONENTS & NEUMORPHISM
+   3. COMPONENTS (CARDS)
 -------------------------------------------------- */
 .card {
-  background: var(--bg-color);
-  box-shadow: var(--shadow-light), var(--shadow-dark);
-  border-radius: 20px;
-  padding: 40px;
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: var(--card-shadow);
+  border-radius: var(--border-radius-lg);
+  padding: 30px;
   width: 100%;
-  max-width: 500px;
   text-align: center;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
   opacity: 0;
-  transform: translateY(20px);
+  transform: scale(0.95) translateY(20px);
   display: none; /* Hidden by default */
+  margin-bottom: 20px;
 }
 
 .card.active {
   display: block;
   opacity: 1;
-  transform: translateY(0);
-  animation: fadeIn 0.5s ease-out forwards;
+  transform: scale(1) translateY(0);
+  animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
-h2 {
-  color: var(--accent);
-  margin-bottom: 25px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-}
-
-p {
-  font-size: 16px;
-  margin: 10px 0;
-  line-height: 1.6;
-}
-
-/* Input Styles */
+/* --------------------------------------------------
+   4. FORMS & INPUTS
+-------------------------------------------------- */
 .input-group {
   margin-bottom: 20px;
   text-align: left;
-  position: relative; /* For password toggle */
+  width: 100%;
 }
 
 label {
   display: block;
-  font-size: 14px;
+  font-size: 0.9rem;
   font-weight: 600;
   margin-bottom: 8px;
   color: var(--text-main);
+  font-family: var(--font-display);
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
 input {
   width: 100%;
-  padding: 15px;
-  border: none;
-  border-radius: 12px;
-  background: var(--bg-color);
-  box-shadow: var(--inner-shadow);
-  font-family: inherit;
-  font-size: 16px;
-  color: var(--text-main);
+  padding: 14px 16px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius-md);
+  background: rgba(15, 23, 42, 0.6);
+  box-shadow: var(--input-shadow);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: #fff;
   outline: none;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+}
+
+input::placeholder {
+  color: #64748B;
 }
 
 input:focus {
-  box-shadow: inset 4px 4px 8px 0 rgba(163, 177, 198, 0.7), inset -4px -4px 8px 0 rgba(255, 255, 255, 0.8);
+  border-color: var(--primary-color);
+  background: rgba(15, 23, 42, 0.8);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
 }
 
 /* Password Toggle */
 .password-toggle {
   position: absolute;
-  right: 15px;
-  top: 42px; /* Adjust based on label height + padding */
+  right: 12px;
+  background: none;
+  border: none;
   cursor: pointer;
-  font-size: 18px;
-  opacity: 0.6;
-  user-select: none;
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  transition: color 0.2s;
+  padding: 5px;
 }
-.password-toggle:hover { opacity: 1; }
+
+.password-toggle:hover {
+  color: var(--primary-color);
+}
 
 /* Suggestion Text */
 .suggestion-text {
-  font-size: 12px;
-  color: var(--accent);
-  margin-top: 5px;
-  font-style: italic;
+  font-size: 0.85rem;
+  color: var(--secondary-color);
+  margin-top: 6px;
+  font-weight: 500;
   min-height: 18px;
 }
 
-/* Button Styles */
+/* --------------------------------------------------
+   5. BUTTONS
+-------------------------------------------------- */
 .btn {
   width: 100%;
-  padding: 15px;
+  padding: 14px;
   border: none;
-  border-radius: 50px;
-  background: var(--bg-color);
-  box-shadow: var(--shadow-light), var(--shadow-dark);
-  color: var(--accent);
-  font-weight: 700;
-  font-size: 16px;
+  border-radius: var(--border-radius-md);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.1rem;
   cursor: pointer;
-  transition: all 0.2s ease;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-top: 10px;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
 }
 
-.btn:hover {
-  transform: translateY(-2px);
-  color: var(--accent-hover);
+.btn-large {
+  padding: 16px;
+  font-size: 1.2rem;
+  border-radius: var(--border-radius-pill);
 }
 
-.btn:active {
-  box-shadow: var(--inner-shadow);
+.btn-primary {
+  background: var(--primary-color);
+  color: white;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+}
+
+.btn-primary:active {
   transform: translateY(1px);
+  box-shadow: 0 2px 10px rgba(59, 130, 246, 0.4);
+}
+
+.btn-secondary {
+  background: var(--secondary-color);
+  color: white;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+}
+
+.btn-secondary:hover {
+  background: var(--secondary-hover);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+}
+
+.btn-secondary:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 10px rgba(16, 185, 129, 0.4);
 }
 
 .btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
-/* Game Specifics */
-#hidden-word {
-  font-size: 32px;
-  letter-spacing: 5px;
+.icon {
+  font-size: 1.5rem;
+  margin-bottom: 4px;
+}
+
+.btn-subtext {
+  font-size: 0.75rem;
+  font-family: var(--font-body);
+  font-weight: 400;
+  opacity: 0.9;
+  letter-spacing: 0.5px;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 2px dashed rgba(148, 163, 184, 0.3);
+}
+
+.divider span {
+  padding: 0 15px;
+}
+
+/* --------------------------------------------------
+   6. GAME SPECIFICS
+-------------------------------------------------- */
+.ready-illustration {
+  font-size: 4rem;
+  margin: 10px 0 20px;
+  animation: bounce 2s infinite ease-in-out;
+}
+
+.hidden-word-display {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  letter-spacing: 6px;
   font-weight: 700;
   color: var(--text-main);
-  margin: 20px 0;
-  min-height: 48px;
+  margin: 20px 0 30px;
+  min-height: 60px;
   transition: color 0.3s ease;
-}
-
-.stats-row {
   display: flex;
-  justify-content: space-between;
-  margin: 20px 0;
-  font-size: 14px;
-  color: var(--text-light);
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
-.stat-item strong {
+.stats-board {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+.stat-box {
+  background: rgba(15, 23, 42, 0.6);
+  padding: 10px 20px;
+  border-radius: var(--border-radius-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 100px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.timer-box {
+  background: rgba(127, 29, 29, 0.2);
+  border: 1px solid rgba(248, 113, 113, 0.3);
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
   color: var(--text-main);
 }
 
 #timer {
-  font-size: 18px;
-  font-weight: 600;
   color: var(--error);
 }
 
-#message {
-  margin-top: 20px;
+.bad-guesses-container {
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: var(--border-radius-md);
+  padding: 12px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.bad-guesses-label {
+  font-size: 0.9rem;
+  color: var(--text-muted);
   font-weight: 600;
-  min-height: 24px;
+  margin-right: 8px;
 }
 
-.message-win { color: var(--success); }
-.message-loss { color: var(--error); }
-.message-warn { color: #d69e2e; }
-
-/* Footer & Rules */
-footer {
-  margin-top: 40px;
-  font-size: 12px;
-  color: var(--text-light);
+.bad-guesses-list {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--error);
+  font-size: 1.1rem;
+  letter-spacing: 2px;
 }
 
+.guess-input-group {
+  margin: 0 auto 20px;
+  max-width: 250px;
+}
+
+.guess-input {
+  text-align: center;
+  font-size: 1.8rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 4px;
+  padding: 15px;
+  border: 3px solid rgba(148, 163, 184, 0.2);
+  border-radius: var(--border-radius-lg);
+  text-transform: uppercase;
+  background: rgba(15, 23, 42, 0.8);
+  color: #fff;
+}
+
+.guess-input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+}
+
+.message-container {
+  min-height: 40px;
+  margin: 15px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#message {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.message-win { color: var(--success) !important; font-size: 1.2rem !important; }
+.message-loss { color: var(--error) !important; font-size: 1.2rem !important;}
+.message-warn { color: var(--warning) !important; }
+
+/* --------------------------------------------------
+   7. RULES & FOOTER
+-------------------------------------------------- */
 .rules-container {
-  margin-top: 30px;
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--box-shadow);
+  padding: 25px;
+  margin-top: 20px;
   width: 100%;
-  max-width: 500px;
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: var(--shadow-light), var(--shadow-dark);
-  font-size: 14px;
 }
 
 .rules-container h3 {
-  color: var(--accent);
+  text-align: center;
   margin-top: 0;
 }
 
 .rules-container ul {
   padding-left: 20px;
-  margin: 0;
-  text-align: left;
+  list-style-type: '👉 ';
 }
 
 .rules-container li {
-  margin-bottom: 5px;
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+  color: var(--text-main);
+  line-height: 1.5;
+}
+
+footer {
+  margin-top: 30px;
+  font-size: 0.85rem;
+  color: #fff;
+  opacity: 0.8;
+  text-align: center;
+  font-weight: 500;
+  letter-spacing: 1px;
 }
 
 /* --------------------------------------------------
-   3. ANIMATIONS
+   8. ANIMATIONS
 -------------------------------------------------- */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+@keyframes popIn {
+  0% { opacity: 0; transform: scale(0.9) translateY(30px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
 /* Wrong Guess Shake */
 @keyframes shakeRed {
-  0%, 100% { transform: translateX(0); box-shadow: var(--shadow-light), var(--shadow-dark); }
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); border: 1px solid var(--error); }
-  20%, 40%, 60%, 80% { transform: translateX(5px); }
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-8px); }
+  20%, 40%, 60%, 80% { transform: translateX(8px); }
 }
 
 /* Correct Guess Pulse */
 @keyframes pulseGreen {
   0% { transform: scale(1); }
-  50% { transform: scale(1.05); box-shadow: 0 0 15px var(--success); }
+  50% { transform: scale(1.1); text-shadow: 0 0 15px var(--success); }
   100% { transform: scale(1); }
 }
 
 .anim-wrong {
   animation: shakeRed 0.5s cubic-bezier(.36,.07,.19,.97) both;
+  border-color: var(--error) !important;
+}
+
+.card.anim-wrong {
+  border-color: var(--error);
+  box-shadow: 0 0 20px rgba(229, 62, 62, 0.4);
 }
 
 .anim-correct {
-  animation: pulseGreen 0.4s ease-in-out;
+  animation: pulseGreen 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
   color: var(--success) !important;
 }
 
-/* Responsive */
-@media (max-width: 600px) {
-  .card { padding: 25px; }
-  #hidden-word { font-size: 24px; letter-spacing: 3px; }
-  h2 { font-size: 24px; }
+/* --------------------------------------------------
+   9. RESPONSIVE DESIGN (MOBILE & DESKTOP)
+-------------------------------------------------- */
+@media (max-width: 480px) {
+  body { padding: 15px 10px; }
+
+  h1 { font-size: 2.5rem; }
+
+  .card { padding: 25px 20px; }
+
+  .hidden-word-display {
+    font-size: 2rem;
+    letter-spacing: 4px;
+    margin: 15px 0 20px;
+  }
+
+  .stats-board { gap: 10px; }
+  .stat-box { padding: 8px 15px; min-width: 80px; }
+  .stat-value { font-size: 1.2rem; }
+
+  .guess-input { font-size: 1.5rem; padding: 12px; }
 }
 
-/* --------------------------------------------------
-   4. YOUR CUSTOM LAPTOP CSS (1500px - 1600px)
--------------------------------------------------- */
-@media screen and (min-width: 1500px) and (max-width: 1600px) {
-  #hidden-word { font-size: 134px; }
-  .card { max-width: 1536px; }
+/* Desktop/Laptop Specifics */
+@media screen and (min-width: 1024px) {
+  .app-container {
+    max-width: 550px; /* Slightly wider on desktop */
+  }
+
+  h1 { font-size: 3.5rem; }
+  .subtitle { font-size: 1.3rem; }
+
+  .card {
+    padding: 40px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .card:hover {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 5px 15px rgba(0, 0, 0, 0.05);
+  }
+
+  .hidden-word-display { font-size: 3rem; }
+
+  .guess-input { max-width: 300px; }
+
+  .rules-container { padding: 30px; }
+}
+
+/* Very Large Laptop Screens */
+@media screen and (min-width: 1500px) and (max-width: 1800px) {
+  .app-container {
+    max-width: 650px;
+  }
+
+  h1 { font-size: 4rem; }
+  .subtitle { font-size: 1.5rem; }
+
+  .card { padding: 50px; }
+
+  h2 { font-size: 2.2rem; }
+
+  .hidden-word-display {
+    font-size: 4rem;
+    letter-spacing: 8px;
+  }
+
+  .stat-value { font-size: 2rem; }
+  .guess-input { font-size: 2.5rem; padding: 20px; max-width: 400px; }
 }

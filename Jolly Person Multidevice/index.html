@@ -4,97 +4,130 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Jolly Person | Remastered</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
 
-    <div id="mode-selection-container" class="card active">
-      <h2>Select Game Mode</h2>
-      <p>How do you want to play today?</p>
-      
-      <button id="btn-mode-single" class="btn">
-        📱 Single Device <br>
-        <span style="font-size: 11px; opacity: 0.7; letter-spacing: 0;">(Pass the phone around)</span>
-      </button>
-
-      <div style="margin: 20px 0; font-weight: bold; color: var(--text-light);">-- OR --</div>
-
-      <button id="btn-mode-multi" class="btn">
-        🌍 Multi Device <br>
-        <span style="font-size: 11px; opacity: 0.7; letter-spacing: 0;">(Play Online with Friends)</span>
-      </button>
+    <div class="background-decorations">
+      <div class="circle circle-1"></div>
+      <div class="circle circle-2"></div>
+      <div class="circle circle-3"></div>
+      <div class="circle circle-4"></div>
     </div>
 
-    <div id="setup-container" class="card">
-      <h2>Game Setup</h2>
-      
-      <div class="input-group">
-        <label for="word-input">Secret Word</label>
-        <input type="password" id="word-input" placeholder="Enter Your Word" autocomplete="off" />
-        <span id="toggle-word" class="password-toggle">👁️</span>
+    <main class="app-container">
+      <header class="app-header">
+        <h1>Jolly Person</h1>
+        <div class="subtitle">Word Guessing Game</div>
+      </header>
+
+      <div id="mode-selection-container" class="card active">
+        <h2>Select Game Mode</h2>
+        <p>How do you want to play today?</p>
+
+        <button id="btn-mode-single" class="btn btn-primary">
+          <span class="icon">📱</span> Single Device
+          <div class="btn-subtext">(Pass the phone around)</div>
+        </button>
+
+        <div class="divider">
+          <span>OR</span>
+        </div>
+
+        <button id="btn-mode-multi" class="btn btn-secondary">
+          <span class="icon">🌍</span> Multi Device
+          <div class="btn-subtext">(Play Online with Friends)</div>
+        </button>
       </div>
 
-      <div class="input-group">
-        <label for="chances-input">Allowed Chances</label>
-        <input type="number" id="chances-input" placeholder="e.g. 5" min="1" value="5" />
-        <div id="suggestion-text" class="suggestion-text"></div>
+      <div id="setup-container" class="card">
+        <h2>Game Setup</h2>
+
+        <div class="input-group">
+          <label for="word-input">Secret Word</label>
+          <div class="input-wrapper">
+            <input type="password" id="word-input" placeholder="Enter Your Word" autocomplete="off" />
+            <button id="toggle-word" class="password-toggle" title="Toggle Visibility">👁️</button>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="chances-input">Allowed Chances</label>
+          <input type="number" id="chances-input" placeholder="e.g. 5" min="1" value="5" />
+          <div id="suggestion-text" class="suggestion-text"></div>
+        </div>
+
+        <button id="btn-start" class="btn btn-primary btn-large">Start Game</button>
       </div>
 
-      <button id="btn-start" class="btn">Start Game</button>
-    </div>
+      <div id="ready-container" class="card">
+        <h2>Ready Player?</h2>
+        <div class="ready-illustration">🎮</div>
+        <p class="highlight-text">The host has set the word.</p>
+        <p class="muted-text">Pass the device to the guesser.</p>
 
-    <div id="ready-container" class="card">
-      <h2>Ready Player?</h2>
-      <p>The host has set the word.</p>
-      <p style="font-size: 14px; color: var(--text-light);">Pass the device to the player.</p>
-      <br>
-      <button id="btn-ready" class="btn">I am Ready</button>
-    </div>
-
-    <div id="game-container" class="card">
-      <h2>Guess the Word</h2>
-      
-      <div id="hidden-word">_ _ _ _ _</div>
-
-      <div class="stats-row">
-        <div class="stat-item">Chances: <strong id="chances">0</strong></div>
-        <div class="stat-item" id="timer">⏳ 120s</div>
-      </div>
-      
-      <p style="font-size: 14px; color: var(--text-light);">Bad Guesses: <span id="incorrect-letters" style="color: var(--error);">None</span></p>
-
-      <div class="input-group" style="margin-top: 20px;">
-        <input 
-          type="text" 
-          id="guess-input" 
-          maxlength="1" 
-          placeholder="Type a letter..." 
-          autocomplete="off"
-          style="text-align: center; font-size: 20px; letter-spacing: 2px;"
-        />
+        <button id="btn-ready" class="btn btn-primary btn-large">I am Ready!</button>
       </div>
 
-      <button id="btn-guess" class="btn">Submit Guess</button>
-      <p id="message"></p>
-      
-      <button id="btn-restart" class="btn" style="display: none; background: #e0e5ec; color: var(--text-main);">Play Again</button>
-    </div>
+      <div id="game-container" class="card">
+        <h2>Guess the Word</h2>
 
-    <div class="rules-container">
-      <h3>📜 Rules of Engagement</h3>
-      <ul>
-        <li>Set a word (hidden) and pass the device.</li>
-        <li>Guess one letter at a time.</li>
-        <li><strong>Timer resets</strong> (120s) on every valid guess.</li>
-        <li>Wrong guess = Lose a chance.</li>
-        <li>Time out = Lose a chance.</li>
-      </ul>
-    </div>
+        <div id="hidden-word" class="hidden-word-display">_ _ _ _ _</div>
 
-    <footer>
-      &copy; 2025 | Games | Built by Saim
-    </footer>
+        <div class="stats-board">
+          <div class="stat-box">
+            <span class="stat-label">Chances</span>
+            <span class="stat-value" id="chances">0</span>
+          </div>
+          <div class="stat-box timer-box">
+            <span class="stat-label">Time</span>
+            <span class="stat-value" id="timer">120s</span>
+          </div>
+        </div>
+
+        <div class="bad-guesses-container">
+          <span class="bad-guesses-label">Misses:</span>
+          <span id="incorrect-letters" class="bad-guesses-list">None</span>
+        </div>
+
+        <div class="input-group guess-input-group">
+          <input
+            type="text"
+            id="guess-input"
+            maxlength="1"
+            placeholder="Type a letter..."
+            autocomplete="off"
+            class="guess-input"
+          />
+        </div>
+
+        <button id="btn-guess" class="btn btn-primary btn-large">Submit Guess</button>
+
+        <div class="message-container">
+          <p id="message"></p>
+        </div>
+
+        <button id="btn-restart" class="btn btn-secondary btn-large" style="display: none;">Play Again</button>
+      </div>
+
+      <div class="rules-container">
+        <h3>📜 Rules of Engagement</h3>
+        <ul>
+          <li>Set a word (hidden) and pass the device.</li>
+          <li>Guess one letter at a time.</li>
+          <li><strong>Timer resets</strong> (120s) on every valid guess.</li>
+          <li>Wrong guess = Lose a chance.</li>
+          <li>Time out = Lose a chance.</li>
+        </ul>
+      </div>
+
+      <footer>
+        &copy; 2025 | Jolly Games | Built by Saim
+      </footer>
+    </main>
 
     <script src="script.js"></script>
   </body>
